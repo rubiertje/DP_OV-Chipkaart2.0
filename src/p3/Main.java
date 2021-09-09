@@ -1,0 +1,106 @@
+package p3;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+
+    public static Connection connection;
+
+    public static void main(String[] args){
+        try {
+            connection = DriverManager.getConnection("jdbc:postgresql:DataPersistency", "postgres", "ruben");
+
+            ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(connection);
+            AdresDAOPsql adresDAOPsql = new AdresDAOPsql(connection);
+//            testReizigerDAO(reizigerDAOPsql);
+//            testAdresDAO(adresDAOPsql);
+
+
+
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    private static void testReizigerDAO(ReizigerDAO rdao){
+        System.out.println("\n---------- Test ReizigerDAO -------------");
+
+        // Haal alle reizigers op uit de database
+        List<Reiziger> reizigers = rdao.findAll();
+        System.out.println("[Test] ReizigerDAO.findAll() geeft de volgende reizigers:");
+        for (Reiziger r : reizigers) {
+            System.out.println(r);
+        }
+        System.out.println();
+
+        // Maak een nieuwe reiziger aan en persisteer deze in de database
+        Reiziger sietske = new Reiziger(77, "S", "", "Boers", LocalDate.of(1981, 3, 14));
+        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
+        rdao.save(sietske);
+        reizigers = rdao.findAll();
+        System.out.println(reizigers.size() + " reizigers");
+
+        System.out.println();
+        System.out.println("[Test] Aantal reizigers voor de Delete functie: " + reizigers.size());
+
+        rdao.delete(sietske);
+        reizigers = rdao.findAll();
+        System.out.println("Aantal reizigers na de Delete functie: " + reizigers.size());
+
+        System.out.println();
+
+        System.out.println("[Test] UPDATE FUNCTIE");
+        System.out.println("De reiziger voor de update: \n\t" + sietske.getId() + "\n\t" + sietske.getVoorletters() + "\n\t" + sietske.getTussenvoegsel() + "\n\t" + sietske.getAchternaam() + "\n\t" + sietske.getGeboortedatum());
+        sietske.setVoorletters("R");
+        sietske.setTussenvoegsel("van");
+        sietske.setAchternaam("Rooijen");
+        sietske.setGeboortedatum(LocalDate.of(2003, 4, 23));
+        System.out.println("De reiziger na de update: \n\t" + sietske.getId() + "\n\t" + sietske.getVoorletters() + "\n\t" + sietske.getTussenvoegsel() + "\n\t" + sietske.getAchternaam() + "\n\t" + sietske.getGeboortedatum());
+
+    }
+
+    public static void testAdresDAO(AdresDAO adoa){
+        System.out.println("\n---------- Test AdresDAO -------------");
+
+        List<Adres> adressen = adoa.findAll();
+        System.out.println("[Test] AdresDAO.findAll() geeft de volgende Adressen:");
+        for (Adres a : adressen) {
+            System.out.println(a);
+        }
+        System.out.println();
+
+        Reiziger sietske = new Reiziger(77, "S", "", "Boers", LocalDate.of(1981, 3, 14));
+        Adres adres5 = new Adres(100, "1111 AA", "1", "heidelberglaan", "Spakenburg", sietske);
+        System.out.print("[Test] Eerst " + adressen.size() + " Adressen, na AdresDAO.save() ");
+        adoa.save(adres5);
+        adressen = adoa.findAll();
+        System.out.println(adressen.size() + " adressen");
+
+        System.out.println();
+        System.out.println("[Test] Aantal adressen voor de Delete functie: " + adressen.size());
+
+        adoa.delete(adres5);
+        adressen = adoa.findAll();
+        System.out.println("Aantal reizigers na de Delete functie: " + adressen.size());
+
+        System.out.println();
+        System.out.println("[Test] UPDATE FUNCTIE");
+        System.out.println("Het adres voor de update: \n\t" + adres5.getId() + "\n\t" + adres5.getPostcode() + "\n\t" + adres5.getHuisnummer() + "\n\t" + adres5.getStraat() + "\n\t" + adres5.getWoonplaats() + "\n\t" + adres5.getReiziger());
+        adres5.setPostcode("2222 BB");
+        adres5.setHuisnummer("2");
+        adres5.setStraat("Padualaan");
+        adres5.setWoonplaats("Utrecht");
+        Reiziger r1 = new Reiziger(99, "T.I", "van", "Rooijen", LocalDate.of(2003, 4, 23));
+        adres5.setReiziger(r1);
+        System.out.println("De reiziger na de update: \n\t" + adres5.getId() + "\n\t" + adres5.getPostcode() + "\n\t" + adres5.getHuisnummer() + "\n\t" + adres5.getStraat() + "\n\t" + adres5.getWoonplaats() + "\n\t" + adres5.getReiziger());
+
+    }
+
+    
+}

@@ -18,7 +18,7 @@ public class Main {
             ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(connection);
             AdresDAOPsql adresDAOPsql = new AdresDAOPsql(connection);
 //            testReizigerDAO(reizigerDAOPsql);
-//            testAdresDAO(adresDAOPsql);
+            testAdresDAO(adresDAOPsql);
 
 
 

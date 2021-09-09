@@ -64,6 +64,7 @@ public class Adres {
 
     public void setReiziger(Reiziger reiziger) {
         this.reiziger = reiziger;
+        reiziger.setAdres(this);
     }
 
     public String toString(){

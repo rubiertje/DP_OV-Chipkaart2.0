@@ -1,31 +1,42 @@
 package p3;
 
+import p3.dao.AdresDAO;
+import p3.dao.AdresDAOPsql;
+import p3.dao.ReizigerDAO;
+import p3.dao.ReizigerDAOPsql;
+import p3.domein.Adres;
+import p3.domein.Reiziger;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 
     public static Connection connection;
 
-    public static void main(String[] args){
-        try {
-            connection = DriverManager.getConnection("jdbc:postgresql:DataPersistency", "postgres", "ruben");
+    public static void main(String[] args) throws SQLException {
+        connection = getConnection();
 
-            ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(connection);
-            AdresDAOPsql adresDAOPsql = new AdresDAOPsql(connection);
-//            testReizigerDAO(reizigerDAOPsql);
-            testAdresDAO(adresDAOPsql);
-
+        ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(connection);
+        AdresDAOPsql adresDAOPsql = new AdresDAOPsql(connection);
+        testReizigerDAO(reizigerDAOPsql);
+//            testAdresDAO(adresDAOPsql);
 
 
 
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+
+        closeConnection();
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:postgresql:DataPersistency", "postgres", "ruben");
+    }
+
+    public static void closeConnection() throws SQLException {
+        connection.close();
     }
 
     private static void testReizigerDAO(ReizigerDAO rdao){

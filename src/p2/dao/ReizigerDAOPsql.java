@@ -1,4 +1,6 @@
-package p2;
+package p2.dao;
+
+import p2.domein.Reiziger;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -13,7 +15,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     }
 
     @Override
-    public boolean save(Reiziger reiziger) {
+    public boolean save(Reiziger reiziger) throws SQLException{
 //        System.out.println("SAVE FUNTIE");
         try {
             String s = "INSERT INTO reiziger (reiziger_id, voorletters, tussenvoegsel, achternaam, geboortedatum) VALUES (?, ?, ?, ?, ?)";
@@ -31,7 +33,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     }
 
     @Override
-    public boolean update(Reiziger reiziger) {
+    public boolean update(Reiziger reiziger) throws SQLException{
 //        System.out.println("UPDATE FUNCTIE");
         try{
             String s = "UPDATE reiziger SET voorletters = ? , tussenvoegsel = ? , achternaam = ? , geboortedatum = ? WHERE reiziger_id = ?";
@@ -49,7 +51,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     }
 
     @Override
-    public boolean delete(Reiziger reiziger) {
+    public boolean delete(Reiziger reiziger) throws SQLException{
 //        System.out.println("DELETE FUNCTIE");
         try {
             String s = "DELETE FROM reiziger WHERE reiziger_id = ?";
@@ -60,6 +62,48 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             return true;
         } catch (SQLException ignored) {}
         return false;
+    }
+
+    @Override
+    public Reiziger findById(int id) throws SQLException {
+        try {
+            String s = "SELECT * FROM reiziger WHERE reiziger_id = ?";
+            PreparedStatement ps = connection.prepareStatement(s);
+            ps.setInt(1, id);
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+            String voorletters = resultSet.getString("voorletters");
+            String tussenvoegsel = resultSet.getString("tussenvoegsel");
+            String achternaam = resultSet.getString("achternaam");
+            LocalDate geboorteDatum = resultSet.getDate("geboortedatum").toLocalDate();
+            Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboorteDatum);
+            resultSet.close();
+            ps.close();
+            return reiziger;
+        }catch (SQLException ignored) {}
+        return null;
+    }
+
+    @Override
+    public ArrayList<Reiziger> findByGbDatum(LocalDate geboortedatum) throws SQLException {
+        try {
+            String s = "SELECT * FROM reiziger WHERE geboortedatum = ?";
+            PreparedStatement ps = connection.prepareStatement(s);
+            ps.setDate(1, Date.valueOf(geboortedatum));
+            ResultSet resultSet = ps.executeQuery();
+            ArrayList<Reiziger> reizigers = new ArrayList<>();
+            while (resultSet.next()){
+                int id = resultSet.getInt("reiziger_id");
+                String voorletters = resultSet.getString("voorletters");
+                String tussenvoegsel = resultSet.getString("tussenvoegsel");
+                String achternaam = resultSet.getString("achternaam");
+                reizigers.add(new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboortedatum));
+            }
+            resultSet.close();
+            ps.close();
+            return reizigers;
+        }catch (SQLException ignored) {}
+        return null;
     }
 
     @Override

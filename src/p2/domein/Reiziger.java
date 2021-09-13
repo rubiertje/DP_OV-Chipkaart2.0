@@ -1,7 +1,6 @@
-package p2;
+package p2.domein;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Reiziger {
 

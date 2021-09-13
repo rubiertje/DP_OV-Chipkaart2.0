@@ -1,21 +1,19 @@
 package p2;
 
+import p2.dao.ReizigerDAO;
+import p2.dao.ReizigerDAOPsql;
+import p2.domein.Reiziger;
+
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 public class Main {
 
     public static Connection connection;
 
-    public static void main(String[] args){
-        try {
-            connection = DriverManager.getConnection("jdbc:postgresql:DataPersistency", "postgres", "ruben");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+    public static void main(String[] args) throws SQLException {
+        connection = getConnection();
         ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(connection);
 
 
@@ -32,6 +30,15 @@ public class Main {
 //        reiziger.setTussenvoegsel("te");
 //        reiziger.setVoorletters("T.I");
 //        reizigerDAOPsql.update(reiziger);
+        closeConnection();
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:postgresql:DataPersistency", "postgres", "ruben");
+    }
+
+    public static void closeConnection() throws SQLException {
+        connection.close();
     }
 
     private static void testReizigerDAO(ReizigerDAO rdao) throws SQLException {

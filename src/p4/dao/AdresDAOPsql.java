@@ -22,9 +22,10 @@ public class AdresDAOPsql implements AdresDAO {
         this.rdoa = rdoa;
     }
 
+
     @Override
     public boolean save(Adres adres) throws SQLException{
-        System.out.println("SAVE FUNTIE");
+//        System.out.println("SAVE FUNTIE");
         try {
             String s = "INSERT INTO adres VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);

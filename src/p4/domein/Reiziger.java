@@ -1,6 +1,7 @@
 package p4.domein;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Reiziger {
 
@@ -10,6 +11,7 @@ public class Reiziger {
     private String achternaam;
     private LocalDate geboortedatum;
     private Adres adres;
+    private ArrayList<OVChipkaart> chipkaarts;
 
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, LocalDate geboortedatum) {
         this.id = id;
@@ -17,6 +19,7 @@ public class Reiziger {
         this.tussenvoegsel = tussenvoegsel;
         this.achternaam = achternaam;
         this.geboortedatum = geboortedatum;
+        this.chipkaarts = new ArrayList<>();
     }
 
     public void setId(int id) {
@@ -67,13 +70,49 @@ public class Reiziger {
         this.adres = adres;
     }
 
-    public String toString(){
-        StringBuilder stringBuilder = new StringBuilder("#" + id + ": " + voorletters + " " + tussenvoegsel + " " + achternaam + " (" + geboortedatum + ")");
-        if (adres == null){
-            return stringBuilder.toString();
-        }else{
-            stringBuilder.append(", Adres: ").append(adres);
-            return stringBuilder.toString();
+    public ArrayList<OVChipkaart> getChipkaarts() {
+        return chipkaarts;
+    }
+
+    public void addChipkaart(OVChipkaart ovChipkaart) {
+        boolean toevoegen = true;
+        for (OVChipkaart ovChipkaart1 : chipkaarts){
+            if (ovChipkaart1.getKaartNummer() == ovChipkaart.getKaartNummer()){
+                toevoegen = false;
+                break;
+            }
         }
+        if (toevoegen){
+//            if (ovChipkaart.getReiziger() == this){
+                this.chipkaarts.add(ovChipkaart);
+//            }else{
+//                System.out.println("TOEVOEGEN MISLUKT! IEMAND ANDERS BEZIT DEZE KAART");
+//            }
+//        }else{
+//            System.out.println("TOEVOEGEN MISLUKT! REIZIGER HEEFT DEZE CHIPKAART AL");
+        }
+    }
+
+    public int getAantalOV(){
+        return this.chipkaarts.size();
+    }
+
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder("#" + id + ": " + voorletters + " ");
+        if (tussenvoegsel != null){
+            stringBuilder.append(tussenvoegsel).append(" ");
+        }
+        stringBuilder.append(achternaam).append(" (").append(geboortedatum).append("). ");
+        if (adres != null){
+            stringBuilder.append(", Adres: ").append(adres);
+        }
+        if (chipkaarts.size() != 0){
+            stringBuilder.append(" Chipkaart(en): ");
+            for (OVChipkaart ovChipkaart : chipkaarts){
+                stringBuilder.append("#").append(ovChipkaart.getKaartNummer()).append(", saldo: ").append(ovChipkaart.getSaldo()).append(", klasse: ").append(ovChipkaart.getKlasse()).append(". ");
+            }
+        }
+
+        return stringBuilder.toString();
     }
 }

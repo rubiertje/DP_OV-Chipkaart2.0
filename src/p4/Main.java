@@ -1,10 +1,8 @@
 package p4;
 
-import p4.dao.ReizigerDAO;
-import p4.dao.ReizigerDAOPsql;
+import p4.dao.*;
+import p4.domein.OVChipkaart;
 import p4.domein.Reiziger;
-import p4.dao.AdresDAO;
-import p4.dao.AdresDAOPsql;
 import p4.domein.Adres;
 
 import java.sql.Connection;
@@ -20,19 +18,15 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         connection = getConnection();
 
-        ReizigerDAOPsql reizigerDAOPsql = new ReizigerDAOPsql(connection);
-        AdresDAOPsql adresDAOPsql = new AdresDAOPsql(connection);
-        reizigerDAOPsql.setAdoa(adresDAOPsql);
-        adresDAOPsql.setRdoa(reizigerDAOPsql);
-//        System.out.println(adresDAOPsql.findAll());
-//        testReizigerDAO(reizigerDAOPsql);
-//        testAdresDAO(adresDAOPsql);
-//        System.out.println(reizigerDAOPsql.findById(1));
-//        System.out.println(reizigerDAOPsql.findAll());
+        ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
+        AdresDAOPsql adao = new AdresDAOPsql(connection);
+        OVChipkaartDAOPsql ovdao = new OVChipkaartDAOPsql(connection);
+        rdao.setAdoa(adao);
+        rdao.setOvdao(ovdao);
+        adao.setRdoa(rdao);
+        ovdao.setRdoa(rdao);
 
-
-
-
+        testReizigerDAO(rdao);
         closeConnection();
     }
 
@@ -117,8 +111,48 @@ public class Main {
         adoa.delete(adres5);
         adressen = adoa.findAll();
         System.out.println("Aantal adressen na de Delete functie: " + adressen.size());
-
     }
+
+    public static void testOVChipkaartDAO(OVChipkaartDAO ovdoa) throws SQLException {
+        System.out.println("\n---------- Test OVChipkaartDAO -------------");
+
+        List<OVChipkaart> chipkaarts = ovdoa.findAll();
+        System.out.println("[Test] OVChipkaartDAO.findAll() geeft de volgende kaarten:");
+        for (OVChipkaart ovChipkaart : chipkaarts) {
+            System.out.println(ovChipkaart);
+        }
+        System.out.println();
+
+        Reiziger r1 = new Reiziger(99, "T.I", "van", "Rooijen", LocalDate.of(2003, 4, 23));
+        OVChipkaart ovChipkaart = new OVChipkaart(1, LocalDate.of(2022, 2, 4), 1, 45.33, r1);
+        OVChipkaart ovChipkaart1 = new OVChipkaart(2, LocalDate.of(2022, 2, 4), 1, 45.33, r1);
+        System.out.print("[Test] Eerst " + chipkaarts.size() + " kaarten, na 2 x OVChipkaartDAO.save() ");
+        ovdoa.save(ovChipkaart);
+        ovdoa.save(ovChipkaart1);
+        chipkaarts = ovdoa.findAll();
+        System.out.println(chipkaarts.size() + " kaarten");
+
+
+        System.out.println();
+        System.out.println("[Test] UPDATE FUNCTIE");
+        System.out.println("De kaart voor de update: \n\t" + ovChipkaart.getKaartNummer() + "\n\t" + ovChipkaart.getGeldigTot() + "\n\t" + ovChipkaart.getKlasse() + "\n\t" + ovChipkaart.getSaldo() + "\n\t" + ovChipkaart.getReiziger());
+        ovChipkaart.setGeldigTot(LocalDate.of(2222,2,22));
+        ovChipkaart.setKlasse(2);
+        ovChipkaart.setSaldo(11.11);
+        ovdoa.update(ovChipkaart);
+        System.out.println("De kaart na de update: \n\t" + ovChipkaart.getKaartNummer() + "\n\t" + ovChipkaart.getGeldigTot() + "\n\t" + ovChipkaart.getKlasse() + "\n\t" + ovChipkaart.getSaldo() + "\n\t" + ovChipkaart.getReiziger());
+
+
+        System.out.println();
+        System.out.println("[Test] Aantal kaarten voor de Delete functie: " + chipkaarts.size());
+
+        ovdoa.delete(ovChipkaart);
+        ovdoa.delete(ovChipkaart1);
+        chipkaarts = ovdoa.findAll();
+        System.out.println("Aantal adressen na 2 x de Delete functie: " + chipkaarts.size());
+    }
+
+
 
     
 }

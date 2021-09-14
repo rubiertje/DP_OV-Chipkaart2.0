@@ -68,7 +68,11 @@ public class Reiziger {
     }
 
     public String toString(){
-        StringBuilder stringBuilder = new StringBuilder("#" + id + ": " + voorletters + " " + tussenvoegsel + " " + achternaam + " (" + geboortedatum + ")");
+        StringBuilder stringBuilder = new StringBuilder("#" + id + ": " + voorletters + " ");
+        if (tussenvoegsel != null){
+            stringBuilder.append(tussenvoegsel).append(" ");
+        }
+        stringBuilder.append(achternaam).append(" (").append(geboortedatum).append("). ");
         if (adres == null){
             return stringBuilder.toString();
         }else{

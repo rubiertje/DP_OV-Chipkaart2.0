@@ -24,11 +24,8 @@ public class Main {
         AdresDAOPsql adresDAOPsql = new AdresDAOPsql(connection);
         reizigerDAOPsql.setAdoa(adresDAOPsql);
         adresDAOPsql.setRdoa(reizigerDAOPsql);
-//        System.out.println(adresDAOPsql.findAll());
-//        testReizigerDAO(reizigerDAOPsql);
-//        testAdresDAO(adresDAOPsql);
-//        System.out.println(reizigerDAOPsql.findById(1));
-//        System.out.println(reizigerDAOPsql.findAll());
+
+        testReizigerDAO(reizigerDAOPsql);
 
 
 

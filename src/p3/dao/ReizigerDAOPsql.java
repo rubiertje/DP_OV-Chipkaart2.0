@@ -74,7 +74,9 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             ps.executeQuery();
             ps.close();
             Adres adres = adoa.findByReiziger(reiziger);
-            adoa.delete(adres);
+            if (adres != null){
+                adoa.delete(adres);
+            }
             return true;
         } catch (SQLException ignored) {}
         return false;
@@ -95,7 +97,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboorteDatum);
             resultSet.close();
             ps.close();
-            adoa.findByReiziger(reiziger);
+            reiziger.setAdres(adoa.findByReiziger(reiziger));
             return reiziger;
         }catch (SQLException ignored) {}
         return null;
@@ -115,7 +117,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                 String tussenvoegsel = resultSet.getString("tussenvoegsel");
                 String achternaam = resultSet.getString("achternaam");
                 Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboortedatum);
-                adoa.findByReiziger(reiziger);
+                reiziger.setAdres(adoa.findByReiziger(reiziger));
                 reizigers.add(reiziger);
             }
             resultSet.close();
@@ -139,7 +141,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                 String achternaam = resultSet.getString("achternaam");
                 LocalDate geboortedatum = resultSet.getDate("geboortedatum").toLocalDate();
                 Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboortedatum);
-                adoa.findByReiziger(reiziger);
+                reiziger.setAdres(adoa.findByReiziger(reiziger));
                 reizigers.add(reiziger);
             }
             ps.close();

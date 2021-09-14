@@ -1,4 +1,4 @@
-package p3;
+package p3.domein;
 
 import java.time.LocalDate;
 

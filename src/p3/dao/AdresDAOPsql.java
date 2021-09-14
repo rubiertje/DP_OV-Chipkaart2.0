@@ -1,4 +1,7 @@
-package p3;
+package p3.dao;
+
+import p3.domein.Adres;
+import p3.domein.Reiziger;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -7,13 +10,18 @@ import java.util.ArrayList;
 public class AdresDAOPsql implements AdresDAO{
 
     private Connection connection;
+    private ReizigerDAO rdoa;
 
     public AdresDAOPsql(Connection connection) {
         this.connection = connection;
     }
 
+    public void setRdoa(ReizigerDAO rdoa) {
+        this.rdoa = rdoa;
+    }
+
     @Override
-    public boolean save(Adres adres){
+    public boolean save(Adres adres) throws SQLException{
         System.out.println("SAVE FUNTIE");
         try {
             String s = "INSERT INTO adres VALUES (?, ?, ?, ?, ?, ?)";
@@ -32,7 +40,7 @@ public class AdresDAOPsql implements AdresDAO{
     }
 
     @Override
-    public boolean update(Adres adres){
+    public boolean update(Adres adres) throws SQLException{
 //        System.out.println("UPDATE FUNCTIE");
         try{
             String s = "UPDATE adres SET postcode = ? , huisnummer = ? , straat = ?, woonplaats = ?, reiziger_id = ? WHERE adres_id = ?";
@@ -51,7 +59,7 @@ public class AdresDAOPsql implements AdresDAO{
     }
 
     @Override
-    public boolean delete(Adres adres){
+    public boolean delete(Adres adres) throws SQLException{
 //        System.out.println("DELETE FUNCTIE");
         try {
             String s = "DELETE FROM adres WHERE adres_id = ?";
@@ -65,7 +73,7 @@ public class AdresDAOPsql implements AdresDAO{
     }
 
     @Override
-    public Adres findByReiziger(Reiziger reiziger) {
+    public Adres findByReiziger(Reiziger reiziger) throws SQLException{
     try {
         String s = "SELECT * FROM adres WHERE reiziger_id = ?";
         PreparedStatement ps = connection.prepareStatement(s);
@@ -85,7 +93,7 @@ public class AdresDAOPsql implements AdresDAO{
     }
 
     @Override
-    public ArrayList<Adres> findAll() {
+    public ArrayList<Adres> findAll() throws SQLException{
         try {
             String s = "SELECT * FROM adres";
             PreparedStatement ps = connection.prepareStatement(s);
@@ -98,19 +106,7 @@ public class AdresDAOPsql implements AdresDAO{
                 String straat = resultSet.getString("straat");
                 String woonplaats = resultSet.getString("woonplaats");
                 int reiziger_id = resultSet.getInt("reiziger_id");
-                String s2 = "SELECT * FROM reiziger WHERE reiziger_id = ?";
-                PreparedStatement ps2 = connection.prepareStatement(s2);
-                ps2.setInt(1, reiziger_id);
-                ResultSet resultSet2 = ps2.executeQuery();
-                resultSet2.next();
-                String voorletters = resultSet2.getString("voorletters");
-                String tussenvoegsel = resultSet2.getString("tussenvoegsel");
-                String achternaam = resultSet2.getString("achternaam");
-                LocalDate geboortedatum = resultSet2.getDate("geboortedatum").toLocalDate();
-                Reiziger r1 = new Reiziger(reiziger_id, voorletters, tussenvoegsel, achternaam, geboortedatum);
-                adressen.add(new Adres(id, postcode, huisnummer, straat, woonplaats, r1));
-                ps2.close();
-                resultSet2.close();
+                adressen.add(new Adres(id, postcode, huisnummer, straat, woonplaats, rdoa.findById(reiziger_id)));
             }
             ps.close();
             resultSet.close();

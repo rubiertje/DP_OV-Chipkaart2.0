@@ -26,7 +26,13 @@ public class Main {
         adao.setRdoa(rdao);
         ovdao.setRdoa(rdao);
 
-        testReizigerDAO(rdao);
+        Reiziger r1 = new Reiziger(111, "T.I", "van", "Rooijen", LocalDate.of(2003, 4, 23));
+        Adres adres5 = new Adres(112, "1111 AA", "1", "heidelberglaan", "Spakenburg", r1);
+        rdao.save(r1);
+
+
+
+//        testReizigerDAO(rdao);
         closeConnection();
     }
 

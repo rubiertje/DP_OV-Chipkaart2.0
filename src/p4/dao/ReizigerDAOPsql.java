@@ -37,11 +37,11 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             ps.setString(3, reiziger.getTussenvoegsel());
             ps.setString(4, reiziger.getAchternaam());
             ps.setDate(5, Date.valueOf(reiziger.getGeboortedatum()));
-            Adres adres = adoa.findByReiziger(reiziger);
+            Adres adres = reiziger.getAdres();
             if (adres != null){
                 adoa.save(adres);
             }
-            ArrayList<OVChipkaart> chipkaarts = ovdao.findByReiziger(reiziger);
+            ArrayList<OVChipkaart> chipkaarts = reiziger.getChipkaarts();
             if (chipkaarts.size() != 0){
                 for (OVChipkaart ovChipkaart : chipkaarts){
                     ovdao.save(ovChipkaart);
@@ -65,11 +65,11 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             ps.setString(3, reiziger.getAchternaam());
             ps.setDate(4, Date.valueOf(reiziger.getGeboortedatum()));
             ps.setInt(5, reiziger.getId());
-            Adres adres = adoa.findByReiziger(reiziger);
+            Adres adres = reiziger.getAdres();
             if (adres != null){
                 adoa.update(adres);
             }
-            ArrayList<OVChipkaart> chipkaarts = ovdao.findByReiziger(reiziger);
+            ArrayList<OVChipkaart> chipkaarts = reiziger.getChipkaarts();
             if (chipkaarts.size() != 0){
                 for (OVChipkaart ovChipkaart : chipkaarts){
                     ovdao.update(ovChipkaart);
@@ -89,11 +89,11 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             String s = "DELETE FROM reiziger WHERE reiziger_id = ?";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setInt(1, reiziger.getId());
-            Adres adres = adoa.findByReiziger(reiziger);
+            Adres adres = reiziger.getAdres();
             if (adres != null){
                 adoa.delete(adres);
             }
-            ArrayList<OVChipkaart> chipkaarts = ovdao.findByReiziger(reiziger);
+            ArrayList<OVChipkaart> chipkaarts = reiziger.getChipkaarts();
             if (chipkaarts.size() != 0){
                 for (OVChipkaart ovChipkaart : chipkaarts){
                     ovdao.delete(ovChipkaart);
@@ -119,9 +119,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             String achternaam = resultSet.getString("achternaam");
             LocalDate geboorteDatum = resultSet.getDate("geboortedatum").toLocalDate();
             Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboorteDatum);
-            reiziger.setAdres(adoa.findByReiziger(reiziger));
+            adoa.findByReiziger(reiziger);
             ovdao.findByReiziger(reiziger);
-            //in de constructor van reiziger wordt de kaart al toegevoegd aan de lijst met kaarten.
+            //in de constructor van adres/ovchipkaart de set/add functie al aangeroepen!
             resultSet.close();
             ps.close();
             return reiziger;
@@ -143,8 +143,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 String tussenvoegsel = resultSet.getString("tussenvoegsel");
                 String achternaam = resultSet.getString("achternaam");
                 Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboortedatum);
-                reiziger.setAdres(adoa.findByReiziger(reiziger));
+                adoa.findByReiziger(reiziger);
                 ovdao.findByReiziger(reiziger);
+                //in de constructor van adres/ovchipkaart de set/add functie al aangeroepen!
                 reizigers.add(reiziger);
             }
             resultSet.close();
@@ -168,8 +169,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 String achternaam = resultSet.getString("achternaam");
                 LocalDate geboortedatum = resultSet.getDate("geboortedatum").toLocalDate();
                 Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboortedatum);
-                reiziger.setAdres(adoa.findByReiziger(reiziger));
+                adoa.findByReiziger(reiziger);
                 ovdao.findByReiziger(reiziger);
+                //in de constructor van adres/ovchipkaart de set/add functie al aangeroepen!
                 reizigers.add(reiziger);
             }
             ps.close();

@@ -33,7 +33,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             ps.setDate(5, Date.valueOf(reiziger.getGeboortedatum()));
             ps.executeQuery();
             ps.close();
-            Adres adres = adoa.findByReiziger(reiziger);
+            Adres adres = reiziger.getAdres();
             if (adres != null){
                 adoa.save(adres);
             }
@@ -55,7 +55,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             ps.setInt(5, reiziger.getId());
             ps.executeQuery();
             ps.close();
-            Adres adres = adoa.findByReiziger(reiziger);
+            Adres adres = reiziger.getAdres();
             if (adres != null){
                 adoa.update(adres);
             }
@@ -73,7 +73,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             ps.setInt(1, reiziger.getId());
             ps.executeQuery();
             ps.close();
-            Adres adres = adoa.findByReiziger(reiziger);
+            Adres adres = reiziger.getAdres();
             if (adres != null){
                 adoa.delete(adres);
             }
@@ -97,7 +97,8 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboorteDatum);
             resultSet.close();
             ps.close();
-            reiziger.setAdres(adoa.findByReiziger(reiziger));
+            adoa.findByReiziger(reiziger);
+            //In de constructor van adres word de het adres bij de reiziger geset.
             return reiziger;
         }catch (SQLException ignored) {}
         return null;
@@ -117,7 +118,8 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                 String tussenvoegsel = resultSet.getString("tussenvoegsel");
                 String achternaam = resultSet.getString("achternaam");
                 Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboortedatum);
-                reiziger.setAdres(adoa.findByReiziger(reiziger));
+                adoa.findByReiziger(reiziger);
+                //In de constructor van adres word de het adres bij de reiziger geset.
                 reizigers.add(reiziger);
             }
             resultSet.close();
@@ -141,7 +143,8 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                 String achternaam = resultSet.getString("achternaam");
                 LocalDate geboortedatum = resultSet.getDate("geboortedatum").toLocalDate();
                 Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboortedatum);
-                reiziger.setAdres(adoa.findByReiziger(reiziger));
+                adoa.findByReiziger(reiziger);
+                //In de constructor van adres word de het adres bij de reiziger geset.
                 reizigers.add(reiziger);
             }
             ps.close();

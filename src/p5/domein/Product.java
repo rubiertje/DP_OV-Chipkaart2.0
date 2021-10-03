@@ -62,6 +62,6 @@ public class Product {
     }
 
     public String toString() {
-        return "productnummer: " + productNummer;
+        return "productnummer: " + productNummer + " naam: " + naam + " beschrijving: " + beschrijving + " prijs: " + prijs;
     }
 }

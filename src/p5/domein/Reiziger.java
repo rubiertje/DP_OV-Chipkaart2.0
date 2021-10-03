@@ -1,4 +1,4 @@
-package p4.domein;
+package p5.domein;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -86,6 +86,15 @@ public class Reiziger {
                 this.chipkaarts.add(ovChipkaart);
 //        }else{
 //            System.out.println("TOEVOEGEN MISLUKT! REIZIGER HEEFT DEZE CHIPKAART AL");
+        }
+    }
+
+    public void deleteChipkaart(OVChipkaart ovChipkaart){
+        for (OVChipkaart ovChipkaart1 : getChipkaarts()){
+            if (ovChipkaart1.getKaartNummer() == ovChipkaart.getKaartNummer()){
+                chipkaarts.remove(ovChipkaart1);
+                break;
+            }
         }
     }
 

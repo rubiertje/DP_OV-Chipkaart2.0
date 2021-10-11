@@ -172,17 +172,17 @@ public class ProductDOAPsql implements ProductDAO{
             ps2.close();
             rs2.close();
 
-            ArrayList<OVChipkaart> chipkaarts = ovdao.findAll();
+            String s3 = "SELECT ov_chipkaart.kaart_nummer FROM ov_chipkaart " +
+                    "JOIN ov_chipkaart_product ON ov_chipkaart.kaart_nummer = ov_chipkaart_product.kaart_nummer " +
+                    "where ov_chipkaart_product.product_nummer = ?";
 
-            for (OVChipkaart ovChipkaart : chipkaarts){
-                ArrayList<Product> ovchipkaartproducten = ovChipkaart.getProducten();
-                for (Product ovProduct : ovchipkaartproducten){
-                    for (Product product : products){
-                        if (product.getNummer() == ovProduct.getNummer() && !product.getChipkaartsnummers().contains(ovChipkaart.getKaartNummer())){
-                            product.addChipkaartNummer(ovChipkaart.getKaartNummer());
-                        }
-                    }
-                }
+            for (Product product : products){
+                PreparedStatement ps3 = connection.prepareStatement(s3);
+                ps3.setInt(1, product.getNummer());
+                ResultSet rs3 = ps3.executeQuery();
+                product.addChipkaartNummer(rs2.getInt("kaart_nummer"));
+                ps3.close();
+                rs3.close();
             }
 
             return products;

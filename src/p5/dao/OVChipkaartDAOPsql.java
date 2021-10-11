@@ -82,20 +82,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     @Override
     public ArrayList<OVChipkaart> findByReiziger(Reiziger reiziger) throws SQLException {
         try {
-            String s2 = "SELECT * FROM product";
-            PreparedStatement ps2 = connection.prepareStatement(s2);
-            ResultSet rs2 = ps2.executeQuery();
-            ArrayList<Product> products = new ArrayList<>();
-            while (rs2.next()){
-                int nummer = rs2.getInt("product_nummer");
-                String naam = rs2.getString("naam");
-                String beschrijving = rs2.getString("beschrijving");
-                double prijs = rs2.getDouble("prijs");
-                products.add(new Product(nummer, naam, beschrijving, prijs));
-            }
-            ps2.close();
-            rs2.close();
-
+            ArrayList<Product> products = pdao.findAll();
 
             String s = "SELECT * FROM ov_chipkaart WHERE reiziger_id = ?";
             PreparedStatement ps = connection.prepareStatement(s);
@@ -110,23 +97,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 double saldo = rs.getDouble("saldo");
                 OVChipkaart ovChipkaart = new OVChipkaart(kaartNummer, geldigTot, klasse, saldo, reiziger);
 
-                String s3 = "SELECT product.product_nummer FROM product " +
-                        "JOIN ov_chipkaart_product ON product.product_nummer = ov_chipkaart_product.product_nummer " +
-                        "where ov_chipkaart_product.kaart_nummer = ?";
-                PreparedStatement ps3 = connection.prepareStatement(s3);
-                ps3.setInt(1, kaartNummer);
-                ResultSet rs3 = ps3.executeQuery();
-                while (rs3.next()){
-                    int productNummer = rs3.getInt("product_nummer");
-                    for (Product product : products){
-                        if (product.getNummer() == productNummer){
-                            ovChipkaart.addProduct(product);
-                            product.addChipkaartNummer(ovChipkaart.getKaartNummer());
-                        }
-                    }
-                }
-                ps3.close();
-                rs3.close();
+
 
                 chipkaarts.add(ovChipkaart);
             }
@@ -141,21 +112,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     @Override
     public ArrayList<OVChipkaart> findAll() throws SQLException {
         try {
-            String s2 = "SELECT * FROM product";
-            PreparedStatement ps2 = connection.prepareStatement(s2);
-            ResultSet rs2 = ps2.executeQuery();
-            ArrayList<Product> products = new ArrayList<>();
-            while (rs2.next()){
-                int nummer = rs2.getInt("product_nummer");
-                String naam = rs2.getString("naam");
-                String beschrijving = rs2.getString("beschrijving");
-                double prijs = rs2.getDouble("prijs");
-                products.add(new Product(nummer, naam, beschrijving, prijs));
-            }
-            ps2.close();
-            rs2.close();
-
-
+            ArrayList<Product> products = pdao.findAll();
             String s = "SELECT * FROM ov_chipkaart";
             PreparedStatement ps = connection.prepareStatement(s);
             ResultSet rs = ps.executeQuery();
@@ -168,23 +125,15 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 int reizigerId = rs.getInt("reiziger_id");
                 OVChipkaart ovChipkaart = new OVChipkaart(kaartNummer, geldigTot, klasse, saldo, rdoa.findById(reizigerId));
 
-                String s3 = "SELECT product.product_nummer FROM product " +
-                        "JOIN ov_chipkaart_product ON product.product_nummer = ov_chipkaart_product.product_nummer " +
-                        "where ov_chipkaart_product.kaart_nummer = ?";
-                PreparedStatement ps3 = connection.prepareStatement(s3);
-                ps3.setInt(1, kaartNummer);
-                ResultSet rs3 = ps3.executeQuery();
-                while (rs3.next()){
-                    int productNummer = rs3.getInt("product_nummer");
-                    for (Product product : products){
-                        if (product.getNummer() == productNummer){
-                            ovChipkaart.addProduct(product);
-                            product.addChipkaartNummer(ovChipkaart.getKaartNummer());
+                for (Product product : products){
+                    if (product.getChipkaartsnummers().size() != 0){
+                        for (int nummer : product.getChipkaartsnummers()){
+                            if (nummer == kaartNummer){
+                                ovChipkaart.addProduct(product);
+                            }
                         }
                     }
                 }
-                ps3.close();
-                rs3.close();
 
                 chipkaarts.add(ovChipkaart);
             }

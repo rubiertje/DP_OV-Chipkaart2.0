@@ -41,8 +41,6 @@ public class Main {
 //            System.out.println(product.getChipkaartsnummers());
 //        }
 
-        testProductDAO(pdao);
-
         closeConnection();
     }
 
@@ -171,7 +169,7 @@ public class Main {
     public static void testProductDAO(ProductDAO pdoa) throws SQLException {
         System.out.println("\n---------- Test ProductDAO -------------");
 
-        List<Product> products = pdoa.findAll();
+        ArrayList<Product> products = pdoa.findAll();
         System.out.println("[Test] ProductDAO.findAll() geeft de volgende producten:");
         for (Product product : products) {
             System.out.println(product);

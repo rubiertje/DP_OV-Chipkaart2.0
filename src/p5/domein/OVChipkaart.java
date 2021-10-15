@@ -61,12 +61,14 @@ public class OVChipkaart {
         return producten;
     }
 
-    public void addProduct(Product product) {
+    public boolean addProduct(Product product) {
         this.producten.add(product);
+        return !this.producten.contains(product);
     }
 
-    public void removeProduct(Product product){
+    public boolean removeProduct(Product product){
         this.producten.remove(product);
+        return !this.producten.contains(product);
     }
 
     public String toString() {

@@ -53,12 +53,14 @@ public class Product {
         return chipkaartsnummers;
     }
 
-    public void addChipkaartNummer(Integer chipkaartnummer) {
+    public boolean addChipkaartNummer(Integer chipkaartnummer) {
         this.chipkaartsnummers.add(chipkaartnummer);
+        return this.chipkaartsnummers.contains(chipkaartnummer);
     }
 
-    public void removeChipkaartNummer(Integer chipkaartnummer){
+    public boolean removeChipkaartNummer(Integer chipkaartnummer){
         this.chipkaartsnummers.remove(chipkaartnummer);
+        return !this.chipkaartsnummers.contains(chipkaartnummer);
     }
 
     public String toString() {

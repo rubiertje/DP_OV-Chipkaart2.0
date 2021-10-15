@@ -111,44 +111,38 @@ public class ProductDOAPsql implements ProductDAO{
     @Override
     public ArrayList<Product> findByOVChipkaart(OVChipkaart ovChipkaart) throws SQLException {
         try {
-            String s = "select * from product " +
+            String s2 = "select * from product " +
                     "join ov_chipkaart_product ocp on product.product_nummer = ocp.product_nummer " +
                     "join ov_chipkaart oc on oc.kaart_nummer = ocp.kaart_nummer " +
                     "where ocp.kaart_nummer = ?";
-            PreparedStatement ps = connection.prepareStatement(s);
-            ps.setInt(1, ovChipkaart.getKaartNummer());
-            ResultSet rs = ps.executeQuery();
-
+            PreparedStatement ps2 = connection.prepareStatement(s2);
+            ResultSet rs2 = ps2.executeQuery();
             ArrayList<Product> products = new ArrayList<>();
+            while (rs2.next()){
+                int nummer = rs2.getInt("product_nummer");
+                String naam = rs2.getString("naam");
+                String beschrijving = rs2.getString("beschrijving");
+                double prijs = rs2.getDouble("prijs");
+                products.add(new Product(nummer, naam, beschrijving, prijs));
+            }
+            ps2.close();
+            rs2.close();
 
-            while (rs.next()){
-                int productnummer = rs.getInt("product_nummer");
-                String naam = rs.getString("naam");
-                String beschrijving = rs.getString("beschrijving");
-                double prijs = rs.getDouble("prijs");
-                Product product = new Product(productnummer, naam, beschrijving, prijs);
-                ovChipkaart.addProduct(product);
-                product.addChipkaartNummer(ovChipkaart.getKaartNummer());
+            String s3 = "SELECT ov_chipkaart.kaart_nummer FROM ov_chipkaart " +
+                    "JOIN ov_chipkaart_product ON ov_chipkaart.kaart_nummer = ov_chipkaart_product.kaart_nummer " +
+                    "where ov_chipkaart_product.product_nummer = ?";
 
-                String s3 = "SELECT ocp.kaart_nummer FROM product " +
-                        "JOIN ov_chipkaart_product ocp ON product.product_nummer = ocp.product_nummer " +
-                        "where product.product_nummer = ?";
+            for (Product product : products){
                 PreparedStatement ps3 = connection.prepareStatement(s3);
-                ps3.setInt(1, productnummer);
+                ps3.setInt(1, product.getNummer());
                 ResultSet rs3 = ps3.executeQuery();
-                while (rs3.next()){
-                    int kaart_nummer = rs3.getInt("kaart_nummer");
-                    if (!product.getChipkaartsnummers().contains(kaart_nummer)){
-                        product.addChipkaartNummer(kaart_nummer);
-                    }
-                }
+                if (!product.addChipkaartNummer(rs2.getInt("kaart_nummer"))){
+                    throw new SQLException();
+                };
                 ps3.close();
                 rs3.close();
-
-                products.add(product);
             }
-            ps.close();
-            rs.close();
+
             return products;
         }catch (SQLException ignored){}
         catch (Exception e){e.getStackTrace();}
@@ -180,14 +174,20 @@ public class ProductDOAPsql implements ProductDAO{
                 PreparedStatement ps3 = connection.prepareStatement(s3);
                 ps3.setInt(1, product.getNummer());
                 ResultSet rs3 = ps3.executeQuery();
-                product.addChipkaartNummer(rs2.getInt("kaart_nummer"));
+                while (rs3.next()){
+                    int kaartnummer = rs3.getInt(1);
+                    if (!product.addChipkaartNummer(kaartnummer)){
+                        throw new SQLException();
+                    };
+                }
                 ps3.close();
                 rs3.close();
             }
 
             return products;
-
-        }catch (SQLException ignored){}
+        }catch (SQLException e){
+            e.getStackTrace();
+        }
         catch (Exception e){e.getStackTrace();}
         return null;
     }

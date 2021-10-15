@@ -90,17 +90,18 @@ public class ProductDOAPsql implements ProductDAO{
     @Override
     public boolean delete(Product product) throws SQLException {
         try {
-            String s = "DELETE FROM product WHERE product_nummer = ?";
-            PreparedStatement ps = connection.prepareStatement(s);
-            ps.setInt(1, product.getNummer());
-            ps.executeQuery();
-            ps.close();
-
             String s2 = "DELETE FROM ov_chipkaart_product WHERE product_nummer = ?";
             PreparedStatement ps2 = connection.prepareStatement(s2);
             ps2.setInt(1, product.getNummer());
             ps2.executeQuery();
             ps2.close();
+
+
+            String s = "DELETE FROM product WHERE product_nummer = ?";
+            PreparedStatement ps = connection.prepareStatement(s);
+            ps.setInt(1, product.getNummer());
+            ps.executeQuery();
+            ps.close();
 
             return true;
         }catch (SQLException ignored){}
